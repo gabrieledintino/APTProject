@@ -18,7 +18,7 @@
 		<hibernate.version>5.6.15.Final</hibernate.version>
 		<testcontainers.version>1.18.3</testcontainers.version>
 	</properties>
-	
+
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -101,8 +101,14 @@
 			<artifactId>postgresql</artifactId>
 			<version>42.6.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>5.3.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
-	
+
 	<profiles>
 		<profile>
 			<id>jacoco</id>
