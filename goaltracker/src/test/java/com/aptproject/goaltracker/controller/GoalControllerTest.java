@@ -8,9 +8,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import java.util.List;
-
 import javax.persistence.EntityExistsException;
-
+import javax.persistence.PersistenceException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -132,6 +131,16 @@ public class GoalControllerTest {
 	}
 	
 	@Test
+	public void testDeletingNonExistingGoalShouldShowAnError() {
+		Goal goal = new Goal("Goal");
+		PersistenceException exception = new PersistenceException("The goal " + goal.getName() + " does not exists");
+		doThrow(exception).when(modelRepository).deleteGoal(goal);
+		goalController.deleteGoal(goal);
+		verify(goalView).showError(exception.getMessage());
+		verify(goalView, never()).goalRemoved(goal);
+	}
+	
+	@Test
 	public void testNewDuplicateHabitShouldShowAnErrorAndNotAddToToTheView() {
 		Goal goal = new Goal("Goal");
 		Habit habit = new Habit("Habit");
@@ -140,5 +149,16 @@ public class GoalControllerTest {
 		goalController.addHabit(goal, habit);
 		verify(goalView).showError(exception.getMessage());
 		verify(goalView, never()).habitAdded(habit);
+	}
+	
+	@Test
+	public void testDeletingNonExistingHabitShouldShowAnError() {
+		Goal goal = new Goal("Goal");
+		Habit habit = new Habit("Habit");
+		PersistenceException exception = new PersistenceException("The habit " + habit.getName() + " does not exists");
+		doThrow(exception).when(modelRepository).removeHabitFromGoal(goal, habit);
+		goalController.removeHabit(goal, habit);
+		verify(goalView).showError(exception.getMessage());
+		verify(goalView, never()).habitRemoved(habit);
 	}
 }

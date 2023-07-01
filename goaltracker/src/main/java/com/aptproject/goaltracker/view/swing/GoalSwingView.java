@@ -1,14 +1,12 @@
 package com.aptproject.goaltracker.view.swing;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,7 +19,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 import com.aptproject.goaltracker.model.Goal;
 import com.aptproject.goaltracker.model.Habit;
 import com.aptproject.goaltracker.view.GoalView;

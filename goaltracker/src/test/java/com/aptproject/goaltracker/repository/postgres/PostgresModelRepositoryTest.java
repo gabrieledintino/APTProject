@@ -2,18 +2,15 @@ package com.aptproject.goaltracker.repository.postgres;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import com.aptproject.goaltracker.model.Goal;
 import com.aptproject.goaltracker.model.Habit;
 
@@ -95,6 +92,18 @@ public class PostgresModelRepositoryTest {
 	}
 	
 	@Test
+	public void testDeleteGoalWhenNotExistingThrowException() {
+		Goal goal = new Goal("Test");		
+		
+		assertThatThrownBy(() -> goalRepository.deleteGoal(goal))
+			.isInstanceOf(PersistenceException.class)
+			.hasMessage("The goal Test does not exists");
+		
+		assertThat(findAllDatabaseSavedGoals())
+			.isEmpty();			
+	}
+	
+	@Test
 	public void testAddHabitToGoalAddHabitAndSetTheLinks() {
 		Goal goal = new Goal("Goal");
 		Habit habit = new Habit("Habit");
@@ -121,6 +130,20 @@ public class PostgresModelRepositoryTest {
 		Goal retrievedGoal = findAllDatabaseSavedGoals().get(0);
 		assertThat(findAllDatabaseSavedHabits()).isEmpty();
 		assertThat(retrievedGoal.getHabits()).isEmpty();
+	}
+	
+	@Test
+	public void testRemoveHabitWhenNotExistingThrowException() {
+		Goal goal = new Goal("Test");		
+		Habit habit = new Habit("Habit");
+		addGoalToDb(goal);
+		
+		assertThatThrownBy(() -> goalRepository.removeHabitFromGoal(goal, habit))
+			.isInstanceOf(PersistenceException.class)
+			.hasMessage("The habit Habit does not exists");
+		
+		assertThat(findAllDatabaseSavedHabits())
+			.isEmpty();			
 	}
 	
 	@Test

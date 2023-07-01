@@ -1,22 +1,22 @@
 package com.aptproject.goaltracker.repository.postgres;
 
 import java.util.List;
-
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
-
 import com.aptproject.goaltracker.model.Goal;
 import com.aptproject.goaltracker.model.Habit;
 import com.aptproject.goaltracker.repository.ModelRepository;
+import com.aptproject.goaltracker.model.HabitId;
 
 public class PostgresModelRepository implements ModelRepository {
 
 	private EntityManager entityManager;
 	private EntityManagerFactory emf;
-	
+
 	EntityManager getEntityManager() {
 		return entityManager;
 	}
@@ -29,8 +29,8 @@ public class PostgresModelRepository implements ModelRepository {
 	@Override
 	public List<Goal> findAllGoals() {
 		String jpql = "SELECT g FROM Goal g";
-        TypedQuery<Goal> query = entityManager.createQuery(jpql, Goal.class);
-        return query.getResultList();
+		TypedQuery<Goal> query = entityManager.createQuery(jpql, Goal.class);
+		return query.getResultList();
 	}
 
 	@Override
@@ -48,14 +48,19 @@ public class PostgresModelRepository implements ModelRepository {
 			entityManager.getTransaction().rollback();
 			throw new EntityExistsException("The goal " + goal.getName() + " already exists");
 		}
-		
+
 	}
 
 	@Override
 	public void deleteGoal(Goal goal) {
-		entityManager.getTransaction().begin();
-		entityManager.remove(goal);
-		entityManager.getTransaction().commit();
+		Goal existing = entityManager.find(Goal.class, goal.getName());
+		if (existing != null) {
+			entityManager.getTransaction().begin();
+			entityManager.remove(goal);
+			entityManager.getTransaction().commit();
+		} else {
+			throw new PersistenceException("The goal " + goal.getName() + " does not exists");
+		}
 	}
 
 	@Override
@@ -65,20 +70,26 @@ public class PostgresModelRepository implements ModelRepository {
 			goal.addHabit(habit);
 			habit.setGoal(goal);
 			entityManager.merge(goal);
-			entityManager.getTransaction().commit();	
+			entityManager.getTransaction().commit();
 		} catch (IllegalStateException e) {
 			entityManager.getTransaction().rollback();
 			throw new IllegalStateException("The habit " + habit.getName() + " already exists for the current goal");
 		}
-		
+
 	}
 
 	@Override
 	public void removeHabitFromGoal(Goal goal, Habit habit) {
-		entityManager.getTransaction().begin();
-		goal.removeHabit(habit);
-		entityManager.merge(goal);
-		entityManager.getTransaction().commit();
+		HabitId habitId = new HabitId(habit.getName(), habit.getGoal());
+		Habit existing = entityManager.find(Habit.class, habitId);
+		if (existing != null) {
+			entityManager.getTransaction().begin();
+			goal.removeHabit(habit);
+			entityManager.merge(goal);
+			entityManager.getTransaction().commit();
+		} else {
+			throw new PersistenceException("The habit " + habit.getName() + " does not exists");
+		}
 	}
 
 	@Override
@@ -86,7 +97,7 @@ public class PostgresModelRepository implements ModelRepository {
 		entityManager.getTransaction().begin();
 		habit.incrementCounter();
 		entityManager.merge(habit);
-		entityManager.getTransaction().commit();		
+		entityManager.getTransaction().commit();
 	}
 
 	@Override
@@ -96,5 +107,4 @@ public class PostgresModelRepository implements ModelRepository {
 		entityManager.merge(habit);
 		entityManager.getTransaction().commit();
 	}
-
 }
