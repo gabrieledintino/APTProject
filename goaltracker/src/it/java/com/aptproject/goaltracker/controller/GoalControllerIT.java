@@ -2,9 +2,6 @@ package com.aptproject.goaltracker.controller;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.verify;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,18 +21,12 @@ public class GoalControllerIT {
 
 	private ModelRepository modelRepository;
 
-	private EntityManager entityManager;
-
-	private EntityManagerFactory emf;
-
 	private AutoCloseable closeable;
 	
 	@Before
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		modelRepository = new PostgresModelRepository("PersistenceUnit");
-		emf = Persistence.createEntityManagerFactory("PersistenceUnit");
-		entityManager = emf.createEntityManager();
 		goalController = new GoalController(goalView, modelRepository);
 	}
 	
