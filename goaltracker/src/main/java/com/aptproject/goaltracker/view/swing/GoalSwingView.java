@@ -1,7 +1,6 @@
 package com.aptproject.goaltracker.view.swing;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
