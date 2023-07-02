@@ -1,5 +1,6 @@
 package com.aptproject.goaltracker.view.swing;
 
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Arrays;
@@ -31,6 +32,8 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	private GoalController goalController;
 
 	private AutoCloseable closeable;
+	
+	private static final int TIMEOUT = 5000;
 
 	@Override
 	protected void onSetUp() {
@@ -96,7 +99,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testShowAllGoalsShouldAddGoalDescriptionsToTheList() {
 		Goal goal1 = new Goal("test1");
 		Goal goal2 = new Goal("test2");
-		GuiActionRunner.execute(() -> goalSwingView.showAllGoals((Arrays.asList(goal1, goal2))));
+		goalSwingView.showAllGoals((Arrays.asList(goal1, goal2)));
 		String[] listContents = window.list("goalList").contents();
 		assertThat(listContents).containsExactly(goal1.toString(), goal2.toString());
 	}
@@ -104,7 +107,8 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testShowErrorShouldShowTheMessageInTheErrorLabel() {
-		GuiActionRunner.execute(() -> goalSwingView.showError("error message"));
+		//GuiActionRunner.execute(() -> goalSwingView.showError("error message"));
+		goalSwingView.showError("error message");
 		window.label("errorMessageLabel").requireText("error message");
 	}
 
@@ -112,7 +116,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	@GUITest
 	public void testGoalAddedShouldAddTheGoalToTheListAndResetTheErrorLabel() {
 		Goal goal = new Goal("test");
-		GuiActionRunner.execute(() -> goalSwingView.goalAdded(goal));
+		goalSwingView.goalAdded(goal);
 		String[] contents = window.list("goalList").contents();
 		assertThat(contents).containsExactly(goal.toString());
 		window.label("errorMessageLabel").requireText(" ");
@@ -129,7 +133,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 			listGoalModel.addElement(goal1);
 			listGoalModel.addElement(goal2);
 		});
-		GuiActionRunner.execute(() -> goalSwingView.goalRemoved(goal1));
+		goalSwingView.goalRemoved(goal1);
 		String[] contents = window.list("goalList").contents();
 		assertThat(contents).containsExactly(goal2.toString());
 		window.label("errorMessageLabel").requireText(" ");
@@ -172,7 +176,8 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 			listGoalModel.addElement(goal);
 		});
 		window.list("goalList").selectItem(0);
-		GuiActionRunner.execute(() -> goalSwingView.habitAdded(habit));
+		//GuiActionRunner.execute(() -> goalSwingView.habitAdded(habit));
+		goalSwingView.habitAdded(habit);
 		String[] contents = window.list("habitList").contents();
 		assertThat(contents).containsExactly(habit.toString());
 		window.label("errorMessageLabel").requireText(" ");
@@ -214,7 +219,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 		});
 		window.list("goalList").selectItem(0);
 		window.list("habitList").selectItem(0);
-		GuiActionRunner.execute(() -> goalSwingView.habitRemoved(habit));
+		goalSwingView.habitRemoved(habit);
 		String[] contents = window.list("habitList").contents();
 		assertThat(contents).isEmpty();
 		window.label("errorMessageLabel").requireText(" ");
@@ -259,11 +264,11 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("goalList").selectItem(0);
 		window.list("habitList").selectItem(0);
 		habit.setCounter(1);
-		GuiActionRunner.execute(() -> goalSwingView.counterUpdated(habit));
+		goalSwingView.counterUpdated(habit);
 		String[] contents = window.list("habitList").contents();
 		assertThat(contents).containsExactly(habit.toString());
 		habit.setCounter(0);
-		GuiActionRunner.execute(() -> goalSwingView.counterUpdated(habit));
+		goalSwingView.counterUpdated(habit);
 		contents = window.list("habitList").contents();
 		assertThat(contents).containsExactly(habit.toString());
 		window.label("errorMessageLabel").requireText(" ");
@@ -283,7 +288,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 			listHabitModel.addElement(habit);
 		});
 		window.list("goalList").selectItem(0);
-		GuiActionRunner.execute(() -> goalSwingView.goalRemoved(goal));
+		goalSwingView.goalRemoved(goal);
 		String[] contents = window.list("habitList").contents();
 		assertThat(contents).isEmpty();
 		window.label("errorMessageLabel").requireText(" ");
@@ -315,7 +320,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testAddGoalShouldDelegateToGoalControllerNewGoal() {
 		window.textBox("goalTextBox").enterText("Goal");
 		window.button(JButtonMatcher.withText("Add goal")).click();
-		verify(goalController).newGoal(new Goal("Goal"));
+		verify(goalController, timeout(TIMEOUT)).newGoal(new Goal("Goal"));
 	}
 	
 	@Test
@@ -330,7 +335,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 		});
 		window.list("goalList").selectItem(1);
 		window.button(JButtonMatcher.withText("Remove goal")).click();
-		verify(goalController).deleteGoal(goal2);
+		verify(goalController, timeout(TIMEOUT)).deleteGoal(goal2);
 	}
 	
 	@Test
@@ -346,7 +351,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("goalList").selectItem(1);
 		window.textBox("habitTextBox").enterText("Habit");
 		window.button(JButtonMatcher.withText("Add habit")).click();
-		verify(goalController).addHabit(goal2, new Habit("Habit"));
+		verify(goalController, timeout(TIMEOUT)).addHabit(goal2, new Habit("Habit"));
 	}
 	
 	@Test
@@ -365,7 +370,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("goalList").selectItem(0);
 		window.list("habitList").selectItem(0);
 		window.button(JButtonMatcher.withText("Remove habit")).click();
-		verify(goalController).removeHabit(goal, habit);
+		verify(goalController, timeout(TIMEOUT)).removeHabit(goal, habit);
 	}
 	
 	@Test
@@ -384,7 +389,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("goalList").selectItem(0);
 		window.list("habitList").selectItem(0);
 		window.button(JButtonMatcher.withText("Incr. counter")).click();
-		verify(goalController).incrementCounter(habit);;
+		verify(goalController, timeout(TIMEOUT)).incrementCounter(habit);;
 	}
 	
 	@Test
@@ -404,7 +409,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 		window.list("goalList").selectItem(0);
 		window.list("habitList").selectItem(0);
 		window.button(JButtonMatcher.withText("Decr. counter")).click();
-		verify(goalController).decrementCounter(habit);;
+		verify(goalController, timeout(TIMEOUT)).decrementCounter(habit);;
 	}
 
 }

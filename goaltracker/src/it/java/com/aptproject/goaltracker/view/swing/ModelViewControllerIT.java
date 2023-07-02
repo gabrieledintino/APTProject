@@ -1,6 +1,10 @@
 package com.aptproject.goaltracker.view.swing;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+
+import java.util.concurrent.TimeUnit;
+
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
@@ -16,7 +20,8 @@ import com.aptproject.goaltracker.repository.postgres.PostgresModelRepository;
 
 @RunWith(GUITestRunner.class)
 public class ModelViewControllerIT extends AssertJSwingJUnitTestCase {
-	
+
+	private static final int TIMEOUT_SECONDS = 5;
 	private GoalSwingView goalSwingView;
 	private FrameFixture window;
 	private GoalController goalController;
@@ -34,87 +39,82 @@ public class ModelViewControllerIT extends AssertJSwingJUnitTestCase {
 		window = new FrameFixture(robot(), goalSwingView);
 		window.show();
 	}
-	
+
 	@Test
 	public void testAddGoal() {
 		window.textBox("goalTextBox").enterText("Goal");
 		window.button(JButtonMatcher.withText("Add goal")).click();
 
-		assertThat(modelRepository.findGoalByName("Goal")).isEqualTo(new Goal("Goal"));
+		await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+				.untilAsserted(() -> assertThat(modelRepository.findGoalByName("Goal")).isEqualTo(new Goal("Goal")));
 	}
-	
+
 	@Test
 	public void testDeleteGoal() {
 		Goal goal = new Goal("Goal");
 		modelRepository.addGoal(goal);
-		GuiActionRunner.execute(() -> {
-			goalController.allGoals();
-		});
+		goalController.allGoals();
 		window.list("goalList").selectItem(0);
 		window.button(JButtonMatcher.withText("Remove goal")).click();
 
-		assertThat(modelRepository.findGoalByName("Goal")).isNull();
+		await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+				.untilAsserted(() -> assertThat(modelRepository.findGoalByName("Goal")).isNull());
 	}
-	
+
 	@Test
-	public void testAddHabit() {
+	public void testAddHabit() throws InterruptedException {
 		Goal goal = new Goal("Goal");
+		Habit habit = new Habit("Habit");
+		habit.setGoal(goal);
 		modelRepository.addGoal(goal);
-		GuiActionRunner.execute(() -> {
-			goalController.allGoals();
-		});
+		goalController.allGoals();
 		window.list("goalList").selectItem(0);
 		window.textBox("habitTextBox").enterText("Habit");
 		window.button(JButtonMatcher.withText("Add habit")).click();
-		
-		Habit habit = new Habit("Habit");
-		habit.setGoal(goal);
-		assertThat(modelRepository.findGoalByName("Goal").getHabits().get(0)).isEqualTo(habit);
+
+		await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(
+				() -> assertThat(modelRepository.findGoalByName("Goal").getHabits().get(0)).isEqualTo(habit));
 	}
-	
+
 	@Test
 	public void testDeleteHabit() {
 		Goal goal = new Goal("Goal");
 		Habit habit = new Habit("Habit");
-		GuiActionRunner.execute(() -> {
-			goalController.newGoal(goal);
-			goalController.addHabit(goal, habit);
-		});
+		goalController.newGoal(goal);
+		goalController.addHabit(goal, habit);
 		window.list("goalList").selectItem(0);
 		window.list("habitList").selectItem(0);
 		window.button(JButtonMatcher.withText("Remove habit")).click();
-		
-		assertThat(modelRepository.findGoalByName("Goal").getHabits()).isEmpty();
+		await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+				.untilAsserted(() -> assertThat(modelRepository.findGoalByName("Goal").getHabits()).isEmpty());
 	}
-	
+
 	@Test
 	public void testIncrementCounter() {
 		Goal goal = new Goal("Goal");
 		Habit habit = new Habit("Habit");
-		GuiActionRunner.execute(() -> {
-			goalController.newGoal(goal);
-			goalController.addHabit(goal, habit);
-		});
+		goalController.newGoal(goal);
+		goalController.addHabit(goal, habit);
 		window.list("goalList").selectItem(0);
 		window.list("habitList").selectItem(0);
 		window.button(JButtonMatcher.withText("Incr. counter")).click();
-		
-		assertThat(modelRepository.findGoalByName("Goal").getHabits().get(0).getCounter()).isEqualTo(1);
+
+		await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(
+				() -> assertThat(modelRepository.findGoalByName("Goal").getHabits().get(0).getCounter()).isEqualTo(1));
 	}
-	
+
 	@Test
 	public void testDecrementCounter() {
 		Goal goal = new Goal("Goal");
 		Habit habit = new Habit("Habit");
-		habit.setCounter(5);
-		GuiActionRunner.execute(() -> {
-			goalController.newGoal(goal);
-			goalController.addHabit(goal, habit);
-		});
+		habit.setCounter(TIMEOUT_SECONDS);
+		goalController.newGoal(goal);
+		goalController.addHabit(goal, habit);
 		window.list("goalList").selectItem(0);
 		window.list("habitList").selectItem(0);
 		window.button(JButtonMatcher.withText("Decr. counter")).click();
-		
-		assertThat(modelRepository.findGoalByName("Goal").getHabits().get(0).getCounter()).isEqualTo(4);
+
+		await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(
+				() -> assertThat(modelRepository.findGoalByName("Goal").getHabits().get(0).getCounter()).isEqualTo(4));
 	}
 }
