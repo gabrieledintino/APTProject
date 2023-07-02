@@ -16,6 +16,7 @@ import com.aptproject.goaltracker.controller.GoalController;
 import com.aptproject.goaltracker.model.Goal;
 import com.aptproject.goaltracker.model.Habit;
 import com.aptproject.goaltracker.repository.ModelRepository;
+import com.aptproject.goaltracker.repository.exception.GoalExistsException;
 import com.aptproject.goaltracker.repository.postgres.PostgresModelRepository;
 
 @RunWith(GUITestRunner.class)
@@ -50,7 +51,7 @@ public class ModelViewControllerIT extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	public void testDeleteGoal() {
+	public void testDeleteGoal() throws GoalExistsException {
 		Goal goal = new Goal("Goal");
 		modelRepository.addGoal(goal);
 		goalController.allGoals();
@@ -62,7 +63,7 @@ public class ModelViewControllerIT extends AssertJSwingJUnitTestCase {
 	}
 
 	@Test
-	public void testAddHabit() throws InterruptedException {
+	public void testAddHabit() throws InterruptedException, GoalExistsException {
 		Goal goal = new Goal("Goal");
 		Habit habit = new Habit("Habit");
 		habit.setGoal(goal);

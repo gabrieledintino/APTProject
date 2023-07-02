@@ -8,8 +8,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import java.util.List;
-import javax.persistence.EntityExistsException;
-import javax.persistence.PersistenceException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +18,10 @@ import org.mockito.MockitoAnnotations;
 import com.aptproject.goaltracker.model.Goal;
 import com.aptproject.goaltracker.model.Habit;
 import com.aptproject.goaltracker.repository.ModelRepository;
+import com.aptproject.goaltracker.repository.exception.GoalExistsException;
+import com.aptproject.goaltracker.repository.exception.GoalNotExistsException;
+import com.aptproject.goaltracker.repository.exception.HabitExistsException;
+import com.aptproject.goaltracker.repository.exception.HabitNotExistsException;
 import com.aptproject.goaltracker.view.GoalView;
 
 public class GoalControllerTest {
@@ -55,7 +57,7 @@ public class GoalControllerTest {
 	}
 	
 	@Test
-	public void testNewGoal() {
+	public void testNewGoal() throws GoalExistsException {
 		Goal goal = new Goal("toAdd");
 		goalController.newGoal(goal);
 		InOrder inOrder = inOrder(modelRepository, goalView);
@@ -64,7 +66,7 @@ public class GoalControllerTest {
 	}
 	
 	@Test
-	public void testDeleteGoal() {
+	public void testDeleteGoal() throws GoalNotExistsException {
 		Goal goalToDelete = new Goal("toDelete");
 		goalController.deleteGoal(goalToDelete);
 		InOrder inOrder = inOrder(modelRepository, goalView);
@@ -73,7 +75,7 @@ public class GoalControllerTest {
 	}
 	
 	@Test
-	public void testAddHabitToGoal() {
+	public void testAddHabitToGoal() throws HabitExistsException {
 		Goal goal = new Goal("goal");
 		Habit habit = new Habit("habit");
 		goalController.addHabit(goal, habit);
@@ -84,7 +86,7 @@ public class GoalControllerTest {
 	}
 	
 	@Test
-	public void testRemoveHabitFromGoal() {
+	public void testRemoveHabitFromGoal() throws HabitNotExistsException {
 		Goal goal = new Goal("goal");
 		Habit habit = new Habit("habit");
 		goalController.removeHabit(goal, habit);
@@ -121,9 +123,9 @@ public class GoalControllerTest {
 	}
 	
 	@Test
-	public void testNewDuplicateGoalShouldShowAnErrorAndNotAddToToTheView() {
+	public void testNewDuplicateGoalShouldShowAnErrorAndNotAddToToTheView() throws GoalExistsException {
 		Goal goal = new Goal("Goal");
-		EntityExistsException exception = new EntityExistsException("The goal " + goal.getName() + " already exists");
+		GoalExistsException exception = new GoalExistsException(goal);
 		doThrow(exception).when(modelRepository).addGoal(goal);
 		goalController.newGoal(goal);
 		verify(goalView).showError(exception.getMessage());
@@ -131,9 +133,9 @@ public class GoalControllerTest {
 	}
 	
 	@Test
-	public void testDeletingNonExistingGoalShouldShowAnError() {
+	public void testDeletingNonExistingGoalShouldShowAnError() throws GoalNotExistsException {
 		Goal goal = new Goal("Goal");
-		PersistenceException exception = new PersistenceException("The goal " + goal.getName() + " does not exists");
+		GoalNotExistsException exception = new GoalNotExistsException(goal);
 		doThrow(exception).when(modelRepository).deleteGoal(goal);
 		goalController.deleteGoal(goal);
 		verify(goalView).showError(exception.getMessage());
@@ -141,10 +143,10 @@ public class GoalControllerTest {
 	}
 	
 	@Test
-	public void testNewDuplicateHabitShouldShowAnErrorAndNotAddToToTheView() {
+	public void testNewDuplicateHabitShouldShowAnErrorAndNotAddToToTheView() throws HabitExistsException {
 		Goal goal = new Goal("Goal");
 		Habit habit = new Habit("Habit");
-		IllegalStateException exception = new IllegalStateException("The habit " + habit.getName() + " already exists for the current goal");
+		HabitExistsException exception = new HabitExistsException(habit);
 		doThrow(exception).when(modelRepository).addHabitToGoal(goal, habit);
 		goalController.addHabit(goal, habit);
 		verify(goalView).showError(exception.getMessage());
@@ -152,10 +154,10 @@ public class GoalControllerTest {
 	}
 	
 	@Test
-	public void testDeletingNonExistingHabitShouldShowAnError() {
+	public void testDeletingNonExistingHabitShouldShowAnError() throws HabitNotExistsException {
 		Goal goal = new Goal("Goal");
 		Habit habit = new Habit("Habit");
-		PersistenceException exception = new PersistenceException("The habit " + habit.getName() + " does not exists");
+		HabitNotExistsException exception = new HabitNotExistsException(habit);
 		doThrow(exception).when(modelRepository).removeHabitFromGoal(goal, habit);
 		goalController.removeHabit(goal, habit);
 		verify(goalView).showError(exception.getMessage());

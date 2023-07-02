@@ -21,6 +21,7 @@ import com.aptproject.goaltracker.controller.GoalController;
 import com.aptproject.goaltracker.model.Goal;
 import com.aptproject.goaltracker.model.Habit;
 import com.aptproject.goaltracker.repository.ModelRepository;
+import com.aptproject.goaltracker.repository.exception.GoalExistsException;
 import com.aptproject.goaltracker.repository.postgres.PostgresModelRepository;
 
 @RunWith(GUITestRunner.class)
@@ -48,7 +49,7 @@ public class GoalSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	@Test
 	@GUITest
-	public void testAllGoals() {
+	public void testAllGoals() throws GoalExistsException {
 		Goal goal1 = new Goal("Goal 1");
 		Goal goal2 = new Goal("Goal 2");
 		modelRepository.addGoal(goal1);
@@ -71,7 +72,7 @@ public class GoalSwingViewIT extends AssertJSwingJUnitTestCase {
 
 	@Test
 	@GUITest
-	public void testAddGoalButtonError() {
+	public void testAddGoalButtonError() throws GoalExistsException {
 		modelRepository.addGoal(new Goal("Goal"));
 		window.textBox("goalTextBox").enterText("Goal");
 		window.button(JButtonMatcher.withText("Add goal")).click();

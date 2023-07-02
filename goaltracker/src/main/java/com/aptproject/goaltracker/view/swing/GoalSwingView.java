@@ -104,9 +104,8 @@ public class GoalSwingView extends JFrame implements GoalView {
 		txtGoal.setName("goalTextBox");
 
 		JButton btnAddGoal = new JButton("Add goal");
-		btnAddGoal.addActionListener(e -> new Thread(() -> {
-			goalController.newGoal(new Goal(txtGoal.getText()));
-		}).start());
+		btnAddGoal
+				.addActionListener(e -> new Thread(() -> goalController.newGoal(new Goal(txtGoal.getText()))).start());
 		btnAddGoal.setEnabled(false);
 		GridBagConstraints gbc_btnAddGoal = new GridBagConstraints();
 		gbc_btnAddGoal.insets = new Insets(0, 0, 5, 5);
@@ -115,9 +114,9 @@ public class GoalSwingView extends JFrame implements GoalView {
 		contentPane.add(btnAddGoal, gbc_btnAddGoal);
 
 		JButton btnRemoveGoal = new JButton("Remove goal");
-		btnRemoveGoal.addActionListener(e -> new Thread(() -> {
-			goalController.deleteGoal(listGoalsModel.elementAt(listGoals.getSelectedIndex()));
-		}).start());
+		btnRemoveGoal.addActionListener(
+				e -> new Thread(() -> goalController.deleteGoal(listGoalsModel.elementAt(listGoals.getSelectedIndex())))
+						.start());
 		btnRemoveGoal.setEnabled(false);
 		GridBagConstraints gbc_btnRemoveGoal = new GridBagConstraints();
 		gbc_btnRemoveGoal.insets = new Insets(0, 0, 5, 0);
@@ -143,10 +142,9 @@ public class GoalSwingView extends JFrame implements GoalView {
 		txtHabit.setName("habitTextBox");
 
 		JButton btnAddHabit = new JButton("Add habit");
-		btnAddHabit.addActionListener(e -> new Thread(() -> {
-			goalController.addHabit(listGoalsModel.elementAt(listGoals.getSelectedIndex()),
-					new Habit(txtHabit.getText()));
-		}).start());
+		btnAddHabit.addActionListener(
+				e -> new Thread(() -> goalController.addHabit(listGoalsModel.elementAt(listGoals.getSelectedIndex()),
+						new Habit(txtHabit.getText()))).start());
 		btnAddHabit.setEnabled(false);
 		GridBagConstraints gbc_btnAddHabit = new GridBagConstraints();
 		gbc_btnAddHabit.insets = new Insets(0, 0, 5, 5);
@@ -155,10 +153,9 @@ public class GoalSwingView extends JFrame implements GoalView {
 		contentPane.add(btnAddHabit, gbc_btnAddHabit);
 
 		JButton btnRemoveHabit = new JButton("Remove habit");
-		btnRemoveHabit.addActionListener(e -> new Thread(() -> {
-			goalController.removeHabit(listGoalsModel.elementAt(listGoals.getSelectedIndex()),
-					listHabitsModel.elementAt(listHabits.getSelectedIndex()));
-		}).start());
+		btnRemoveHabit.addActionListener(
+				e -> new Thread(() -> goalController.removeHabit(listGoalsModel.elementAt(listGoals.getSelectedIndex()),
+						listHabitsModel.elementAt(listHabits.getSelectedIndex()))).start());
 		btnRemoveHabit.setEnabled(false);
 		GridBagConstraints gbc_btnRemoveHabit = new GridBagConstraints();
 		gbc_btnRemoveHabit.insets = new Insets(0, 0, 5, 0);
@@ -175,9 +172,9 @@ public class GoalSwingView extends JFrame implements GoalView {
 		contentPane.add(lblCounter, gbc_lblCounter);
 
 		JButton btnIncreaseCounter = new JButton("Incr. counter");
-		btnIncreaseCounter.addActionListener(e -> new Thread(() -> {
-			goalController.incrementCounter(listHabitsModel.getElementAt(listHabits.getSelectedIndex()));
-		}).start());
+		btnIncreaseCounter.addActionListener(e -> new Thread(
+				() -> goalController.incrementCounter(listHabitsModel.getElementAt(listHabits.getSelectedIndex())))
+				.start());
 		btnIncreaseCounter.setEnabled(false);
 		GridBagConstraints gbc_btnIncreaseCounter = new GridBagConstraints();
 		gbc_btnIncreaseCounter.insets = new Insets(0, 0, 5, 5);
@@ -186,9 +183,9 @@ public class GoalSwingView extends JFrame implements GoalView {
 		contentPane.add(btnIncreaseCounter, gbc_btnIncreaseCounter);
 
 		JButton btnDecreaseCounter = new JButton("Decr. counter");
-		btnDecreaseCounter.addActionListener(e -> new Thread(() -> {
-			goalController.decrementCounter(listHabitsModel.getElementAt(listHabits.getSelectedIndex()));
-		}).start());
+		btnDecreaseCounter.addActionListener(e -> new Thread(
+				() -> goalController.decrementCounter(listHabitsModel.getElementAt(listHabits.getSelectedIndex())))
+				.start());
 		btnDecreaseCounter.setEnabled(false);
 		GridBagConstraints gbc_btnDecreaseCounter = new GridBagConstraints();
 		gbc_btnDecreaseCounter.insets = new Insets(0, 0, 5, 5);
@@ -260,16 +257,12 @@ public class GoalSwingView extends JFrame implements GoalView {
 
 	@Override
 	public void showAllGoals(List<Goal> goals) {
-		SwingUtilities.invokeLater(() -> {
-			goals.stream().forEach(listGoalsModel::addElement);
-		});
+		SwingUtilities.invokeLater(() -> goals.stream().forEach(listGoalsModel::addElement));
 	}
 
 	@Override
 	public void showError(String message) {
-		SwingUtilities.invokeLater(() -> {
-			lblError.setText(message);
-		});
+		SwingUtilities.invokeLater(() -> lblError.setText(message));
 	}
 
 	@Override

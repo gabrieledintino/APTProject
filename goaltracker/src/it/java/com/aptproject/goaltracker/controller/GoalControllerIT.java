@@ -10,6 +10,8 @@ import org.mockito.MockitoAnnotations;
 import com.aptproject.goaltracker.model.Goal;
 import com.aptproject.goaltracker.model.Habit;
 import com.aptproject.goaltracker.repository.ModelRepository;
+import com.aptproject.goaltracker.repository.exception.GoalExistsException;
+import com.aptproject.goaltracker.repository.exception.HabitExistsException;
 import com.aptproject.goaltracker.repository.postgres.PostgresModelRepository;
 import com.aptproject.goaltracker.view.GoalView;
 
@@ -36,7 +38,7 @@ public class GoalControllerIT {
 	}
 	
 	@Test
-	public void testAllGoals() {
+	public void testAllGoals() throws GoalExistsException {
 		Goal goal = new Goal("Goal");
 		modelRepository.addGoal(goal);
 		goalController.allGoals();
@@ -51,7 +53,7 @@ public class GoalControllerIT {
 	}
 	
 	@Test
-	public void testDeleteGoal() {
+	public void testDeleteGoal() throws GoalExistsException {
 		Goal goalToDelete = new Goal("toDelete");
 		modelRepository.addGoal(goalToDelete);
 		goalController.deleteGoal(goalToDelete);
@@ -59,7 +61,7 @@ public class GoalControllerIT {
 	}
 	
 	@Test
-	public void testAddHabitToGoal() {
+	public void testAddHabitToGoal() throws GoalExistsException {
 		Goal goal = new Goal("goal");
 		Habit habit = new Habit("habit");
 		modelRepository.addGoal(goal);
@@ -69,7 +71,7 @@ public class GoalControllerIT {
 	}
 	
 	@Test
-	public void testRemoveHabitFromGoal() {
+	public void testRemoveHabitFromGoal() throws GoalExistsException, HabitExistsException {
 		Goal goal = new Goal("goal");
 		Habit habit = new Habit("habit");
 		modelRepository.addGoal(goal);
@@ -79,7 +81,7 @@ public class GoalControllerIT {
 	}
 	
 	@Test
-	public void testIncrementHabitCounter() {
+	public void testIncrementHabitCounter() throws GoalExistsException, HabitExistsException {
 		Goal goal = new Goal("goal");
 		Habit habit = new Habit("habit");
 		modelRepository.addGoal(goal);
@@ -89,7 +91,7 @@ public class GoalControllerIT {
 	}
 	
 	@Test
-	public void testDecrementHabitCounterWhenCounterIsGreaterThanZero() {
+	public void testDecrementHabitCounterWhenCounterIsGreaterThanZero() throws GoalExistsException, HabitExistsException {
 		Goal goal = new Goal("goal");
 		Habit habit = new Habit("habit");
 		modelRepository.addGoal(goal);
@@ -97,5 +99,5 @@ public class GoalControllerIT {
 		habit.setCounter(5);
 		goalController.decrementCounter(habit);
 		verify(goalView).counterUpdated(habit);
-	}
+	}	
 }
