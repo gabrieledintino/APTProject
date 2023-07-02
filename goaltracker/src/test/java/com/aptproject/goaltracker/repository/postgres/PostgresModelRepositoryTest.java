@@ -5,14 +5,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import org.junit.Before;
 import org.junit.Test;
 import com.aptproject.goaltracker.model.Goal;
 import com.aptproject.goaltracker.model.Habit;
+import com.aptproject.goaltracker.repository.exception.GoalExistsException;
+import com.aptproject.goaltracker.repository.exception.GoalNotExistsException;
+import com.aptproject.goaltracker.repository.exception.HabitExistsException;
+import com.aptproject.goaltracker.repository.exception.HabitNotExistsException;
 
 public class PostgresModelRepositoryTest {
 	
@@ -71,7 +73,7 @@ public class PostgresModelRepositoryTest {
 	}
 	
 	@Test
-	public void testAddGoal() {
+	public void testAddGoal() throws GoalExistsException {
 		Goal goal = new Goal("Test");
 		
 		goalRepository.addGoal(goal);
@@ -81,7 +83,7 @@ public class PostgresModelRepositoryTest {
 	}
 	
 	@Test
-	public void testDeleteGoal() {
+	public void testDeleteGoal() throws GoalNotExistsException {
 		Goal goal = new Goal("Test");
 		addGoalToDb(goal);
 		
@@ -96,7 +98,7 @@ public class PostgresModelRepositoryTest {
 		Goal goal = new Goal("Test");		
 		
 		assertThatThrownBy(() -> goalRepository.deleteGoal(goal))
-			.isInstanceOf(PersistenceException.class)
+			.isInstanceOf(GoalNotExistsException.class)
 			.hasMessage("The goal Test does not exists");
 		
 		assertThat(findAllDatabaseSavedGoals())
@@ -104,7 +106,7 @@ public class PostgresModelRepositoryTest {
 	}
 	
 	@Test
-	public void testAddHabitToGoalAddHabitAndSetTheLinks() {
+	public void testAddHabitToGoalAddHabitAndSetTheLinks() throws HabitExistsException {
 		Goal goal = new Goal("Goal");
 		Habit habit = new Habit("Habit");
 		addGoalToDb(goal);
@@ -118,7 +120,7 @@ public class PostgresModelRepositoryTest {
 	}
 	
 	@Test
-	public void testRemoveHabitFromGoalRemoveHabit() {
+	public void testRemoveHabitFromGoalRemoveHabit() throws HabitNotExistsException {
 		Goal goal = new Goal("Goal");
 		Habit habit = new Habit("Habit");
 		goal.setHabits(Arrays.asList(habit));
@@ -139,7 +141,7 @@ public class PostgresModelRepositoryTest {
 		addGoalToDb(goal);
 		
 		assertThatThrownBy(() -> goalRepository.removeHabitFromGoal(goal, habit))
-			.isInstanceOf(PersistenceException.class)
+			.isInstanceOf(HabitNotExistsException.class)
 			.hasMessage("The habit Habit does not exists");
 		
 		assertThat(findAllDatabaseSavedHabits())
@@ -182,14 +184,14 @@ public class PostgresModelRepositoryTest {
 		addGoalToDb(goal1);
 		
 		assertThatThrownBy(() -> goalRepository.addGoal(goal2))
-			.isInstanceOf(EntityExistsException.class)
+			.isInstanceOf(GoalExistsException.class)
 			.hasMessage("The goal Goal already exists");
 		assertThat(findAllDatabaseSavedGoals()).size().isEqualTo(1);
 		assertThat(findAllDatabaseSavedGoals()).containsExactly(goal1);
 	}
 	
 	@Test
-	public void testHabitWithSameNameButDifferentGoalAreSaved() {
+	public void testHabitWithSameNameButDifferentGoalAreSaved() throws HabitExistsException {
 		Goal goal1 = new Goal("Goal 1");
 		Goal goal2 = new Goal("Goal 2");
 		Habit habit1 = new Habit("Habit");
@@ -217,7 +219,7 @@ public class PostgresModelRepositoryTest {
 		addGoalToDb(goal2);
 		
 		assertThatThrownBy(() -> goalRepository.addHabitToGoal(goal1, habit2))
-			.isInstanceOf(IllegalStateException.class)
+			.isInstanceOf(HabitExistsException.class)
 			.hasMessage("The habit Habit already exists for the current goal");
 		assertThat(findAllDatabaseSavedHabits()).size().isEqualTo(1);
 	}

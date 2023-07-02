@@ -1,10 +1,12 @@
 package com.aptproject.goaltracker.controller;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.PersistenceException;
 import com.aptproject.goaltracker.model.Goal;
 import com.aptproject.goaltracker.model.Habit;
 import com.aptproject.goaltracker.repository.ModelRepository;
+import com.aptproject.goaltracker.repository.exception.GoalExistsException;
+import com.aptproject.goaltracker.repository.exception.GoalNotExistsException;
+import com.aptproject.goaltracker.repository.exception.HabitExistsException;
+import com.aptproject.goaltracker.repository.exception.HabitNotExistsException;
 import com.aptproject.goaltracker.view.GoalView;
 
 public class GoalController {
@@ -23,7 +25,7 @@ public class GoalController {
 	public void newGoal(Goal goal) {
 		try {
 			modelRepository.addGoal(goal);
-		} catch (EntityExistsException e) {
+		} catch (GoalExistsException e) {
 			goalView.showError(e.getMessage());
 			return;
 		}
@@ -33,7 +35,7 @@ public class GoalController {
 	public void deleteGoal(Goal goal) {
 		try {
 			modelRepository.deleteGoal(goal);
-		} catch (PersistenceException e) {
+		} catch (GoalNotExistsException e) {
 			goalView.showError(e.getMessage());
 			return;
 		}
@@ -43,7 +45,7 @@ public class GoalController {
 	public void addHabit(Goal goal, Habit habit) {
 		try {
 			modelRepository.addHabitToGoal(goal, habit);
-		} catch (IllegalStateException e) {
+		} catch (HabitExistsException e) {
 			goalView.showError(e.getMessage());
 			return;
 		}
@@ -53,7 +55,7 @@ public class GoalController {
 	public void removeHabit(Goal goal, Habit habit) {
 		try {
 			modelRepository.removeHabitFromGoal(goal, habit);
-		} catch (PersistenceException e) {
+		} catch (HabitNotExistsException e) {
 			goalView.showError(e.getMessage());
 			return;
 		}
