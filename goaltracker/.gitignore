@@ -1,1 +1,8 @@
+# Compiled class file
+*.class
+
+# Maven output folder
 /target/
+
+# GUITest screenshots
+/failed-gui-tests/
