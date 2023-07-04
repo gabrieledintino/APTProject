@@ -18,7 +18,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import com.aptproject.goaltracker.model.Goal;
 import com.aptproject.goaltracker.model.Habit;
@@ -37,7 +36,7 @@ public class GoalSwingView extends JFrame implements GoalView {
 	private JList<Habit> listHabits;
 	private DefaultListModel<Habit> listHabitsModel;
 
-	private GoalController goalController;
+	private transient GoalController goalController;
 
 	public void setGoalController(GoalController goalController) {
 		this.goalController = goalController;
@@ -222,17 +221,14 @@ public class GoalSwingView extends JFrame implements GoalView {
 
 		listGoalsModel = new DefaultListModel<>();
 		listGoals = new JList<>(listGoalsModel);
-		ListSelectionListener listGoalSelectionListener = new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				int selectedIndex = listGoals.getSelectedIndex();
-				btnRemoveGoal.setEnabled(listGoals.getSelectedIndex() != -1);
-				btnAddHabit.setEnabled(!txtHabit.getText().trim().isEmpty() && selectedIndex != -1);
-				if (selectedIndex != -1) {
-					listHabitsModel.clear();
-					Goal selectedGoal = listGoalsModel.get(selectedIndex);
-					listHabitsModel.addAll(selectedGoal.getHabits());
-				}
+		ListSelectionListener listGoalSelectionListener = e -> {
+			int selectedIndex = listGoals.getSelectedIndex();
+			btnRemoveGoal.setEnabled(listGoals.getSelectedIndex() != -1);
+			btnAddHabit.setEnabled(!txtHabit.getText().trim().isEmpty() && selectedIndex != -1);
+			if (selectedIndex != -1) {
+				listHabitsModel.clear();
+				Goal selectedGoal = listGoalsModel.get(selectedIndex);
+				listHabitsModel.addAll(selectedGoal.getHabits());
 			}
 		};
 		listGoals.addListSelectionListener(listGoalSelectionListener);
@@ -242,13 +238,10 @@ public class GoalSwingView extends JFrame implements GoalView {
 
 		listHabitsModel = new DefaultListModel<>();
 		listHabits = new JList<>(listHabitsModel);
-		ListSelectionListener listHabitSelectionListener = new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				btnRemoveHabit.setEnabled(listHabits.getSelectedIndex() != -1);
-				btnIncreaseCounter.setEnabled(listHabits.getSelectedIndex() != -1);
-				btnDecreaseCounter.setEnabled(listHabits.getSelectedIndex() != -1);
-			}
+		ListSelectionListener listHabitSelectionListener = e -> {
+			btnRemoveHabit.setEnabled(listHabits.getSelectedIndex() != -1);
+			btnIncreaseCounter.setEnabled(listHabits.getSelectedIndex() != -1);
+			btnDecreaseCounter.setEnabled(listHabits.getSelectedIndex() != -1);
 		};
 		listHabits.addListSelectionListener(listHabitSelectionListener);
 		listHabits.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
