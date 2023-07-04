@@ -91,7 +91,6 @@ public class GoalSwingViewIT extends AssertJSwingJUnitTestCase {
 	@GUITest
 	public void testDeleteGoalButtonSuccess() {
 		Goal goal = new Goal("toDelete");
-		// GuiActionRunner.execute(() -> goalController.newGoal(goal));
 		goalController.newGoal(goal);
 		window.list("goalList").selectItem(0);
 		window.button(JButtonMatcher.withText("Remove goal")).click();
