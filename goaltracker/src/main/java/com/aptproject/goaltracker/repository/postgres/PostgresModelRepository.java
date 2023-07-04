@@ -5,6 +5,7 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
 import com.aptproject.goaltracker.model.Goal;
 import com.aptproject.goaltracker.model.Habit;
@@ -19,10 +20,6 @@ public class PostgresModelRepository implements ModelRepository {
 
 	private EntityManager entityManager;
 	private EntityManagerFactory emf;
-
-	EntityManager getEntityManager() {
-		return entityManager;
-	}
 
 	public PostgresModelRepository(String persistenceUnitName) {
 		emf = Persistence.createEntityManagerFactory(persistenceUnitName);
@@ -47,7 +44,7 @@ public class PostgresModelRepository implements ModelRepository {
 			entityManager.getTransaction().begin();
 			entityManager.persist(goal);
 			entityManager.getTransaction().commit();
-		} catch (EntityExistsException e) {
+		} catch (EntityExistsException | RollbackException e) {
 			entityManager.getTransaction().rollback();
 			throw new GoalExistsException(goal);
 		}
@@ -57,11 +54,12 @@ public class PostgresModelRepository implements ModelRepository {
 	@Override
 	public void deleteGoal(Goal goal) throws GoalNotExistsException {
 		Goal existing = entityManager.find(Goal.class, goal.getName());
-		if (existing != null) {
+		try {
 			entityManager.getTransaction().begin();
-			entityManager.remove(goal);
+			entityManager.remove(existing);
 			entityManager.getTransaction().commit();
-		} else {
+		} catch (IllegalArgumentException | RollbackException e) {
+			entityManager.getTransaction().rollback();
 			throw new GoalNotExistsException(goal);
 		}
 	}
@@ -83,14 +81,17 @@ public class PostgresModelRepository implements ModelRepository {
 
 	@Override
 	public void removeHabitFromGoal(Goal goal, Habit habit) throws HabitNotExistsException {
+		Goal existingGoal = entityManager.find(Goal.class, goal.getName());
 		HabitId habitId = new HabitId(habit.getName(), habit.getGoal());
-		Habit existing = entityManager.find(Habit.class, habitId);
-		if (existing != null) {
+		Habit existingHabit = entityManager.find(Habit.class, habitId);
+		try {
 			entityManager.getTransaction().begin();
-			goal.removeHabit(habit);
-			entityManager.merge(goal);
+			existingGoal.removeHabit(existingHabit);
+			entityManager.remove(existingHabit);
+			entityManager.merge(existingGoal);
 			entityManager.getTransaction().commit();
-		} else {
+		} catch (IllegalArgumentException | RollbackException e) {
+			entityManager.getTransaction().rollback();
 			throw new HabitNotExistsException(habit);
 		}
 	}

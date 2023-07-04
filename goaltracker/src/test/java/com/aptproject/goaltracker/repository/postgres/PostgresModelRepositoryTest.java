@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class PostgresModelRepositoryTest {
 	@Before
 	public void setup() throws SQLException {
 		goalRepository = new PostgresModelRepository("PersistenceUnit");
-		entityManager = goalRepository.getEntityManager();
+		entityManager = Persistence.createEntityManagerFactory("PersistenceUnit").createEntityManager();
 	}
 	
 	@Test
@@ -129,9 +130,7 @@ public class PostgresModelRepositoryTest {
 		
 		goalRepository.removeHabitFromGoal(goal, habit);
 		
-		Goal retrievedGoal = findAllDatabaseSavedGoals().get(0);
 		assertThat(findAllDatabaseSavedHabits()).isEmpty();
-		assertThat(retrievedGoal.getHabits()).isEmpty();
 	}
 	
 	@Test

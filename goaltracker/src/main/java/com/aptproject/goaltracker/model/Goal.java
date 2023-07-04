@@ -1,13 +1,17 @@
 package com.aptproject.goaltracker.model;
 
 import javax.persistence.*;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "goals")
-public class Goal {
+public class Goal implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
     private String name;

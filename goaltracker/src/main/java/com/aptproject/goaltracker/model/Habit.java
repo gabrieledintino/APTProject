@@ -1,12 +1,15 @@
 package com.aptproject.goaltracker.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
 @IdClass(HabitId.class)
 @Table(name = "habit")
-public class Habit {
+public class Habit implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	@Id
     private String name;
