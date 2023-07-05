@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "goals")
+@Table(name = "goal")
 public class Goal implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -38,20 +38,15 @@ public class Goal implements Serializable {
     public List<Habit> getHabits() {
         return habits;
     }
-
-    public void setHabits(List<Habit> habits) {
-    	this.habits.clear();
-    	if (habits != null) {
-    		this.habits.addAll(habits);
-    	}
-    }
     
     public void addHabit(Habit habit) {
     	this.habits.add(habit);
+    	habit.setGoal(this);
     }
     
     public void removeHabit(Habit habit) {
     	this.habits.remove(habit);
+    	habit.setGoal(null);
     }
 
 	@Override

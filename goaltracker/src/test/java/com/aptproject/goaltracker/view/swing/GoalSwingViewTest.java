@@ -188,8 +188,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testRemoveHabitButtonShouldBeEnabledOnlyWhenAnHabitIsSelected() {
 		Goal goal = new Goal("goal");
 		Habit habit = new Habit("habit");
-		goal.setHabits(Arrays.asList(habit));
-		habit.setGoal(goal);
+		goal.addHabit(habit);
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Goal> listGoalModel = goalSwingView.getListGoalModel();
 			listGoalModel.addElement(goal);
@@ -209,8 +208,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testHabitRemovedShouldRemoveTheHabitFromTheListAndResetTheErrorLabel() {
 		Goal goal = new Goal("goal");
 		Habit habit = new Habit("habit");
-		goal.setHabits(Arrays.asList(habit));
-		habit.setGoal(goal);
+		goal.addHabit(habit);
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Goal> listGoalModel = goalSwingView.getListGoalModel();
 			listGoalModel.addElement(goal);
@@ -230,8 +228,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testIncrementAndDecrementCounterButtonsShouldBeEnabledWhenHabitSelected() {
 		Goal goal = new Goal("goal");
 		Habit habit = new Habit("habit");
-		goal.setHabits(Arrays.asList(habit));
-		habit.setGoal(goal);
+		goal.addHabit(habit);
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Goal> listGoalModel = goalSwingView.getListGoalModel();
 			listGoalModel.addElement(goal);
@@ -253,8 +250,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testCounterUpdatedShouldUpdateTheHabitListAndResetTheErrorLabel() {
 		Goal goal = new Goal("goal");
 		Habit habit = new Habit("habit");
-		goal.setHabits(Arrays.asList(habit));
-		habit.setGoal(goal);
+		goal.addHabit(habit);
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Goal> listGoalModel = goalSwingView.getListGoalModel();
 			listGoalModel.addElement(goal);
@@ -279,8 +275,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testGoalDeletedShouldRemoveAlsoTheHabitFromTheListAndResetTheErrorLabel() {
 		Goal goal = new Goal("goal");
 		Habit habit = new Habit("habit");
-		goal.setHabits(Arrays.asList(habit));
-		habit.setGoal(goal);
+		goal.addHabit(habit);
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Goal> listGoalModel = goalSwingView.getListGoalModel();
 			listGoalModel.addElement(goal);
@@ -300,8 +295,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 		Goal goal1 = new Goal("goal1");
 		Goal goal2 = new Goal("goal2");
 		Habit habit = new Habit("habit");
-		goal2.setHabits(Arrays.asList(habit));
-		habit.setGoal(goal2);
+		goal2.addHabit(habit);
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Goal> listGoalModel = goalSwingView.getListGoalModel();
 			listGoalModel.addElement(goal1);
@@ -359,8 +353,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testRemoveHabitShouldDelegateToGoalControllerRemoveHabit() {
 		Goal goal = new Goal("goal");
 		Habit habit = new Habit("habit");
-		goal.setHabits(Arrays.asList(habit));
-		habit.setGoal(goal);
+		goal.addHabit(habit);
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Goal> listGoalModel = goalSwingView.getListGoalModel();
 			listGoalModel.addElement(goal);
@@ -378,8 +371,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testIncrementCounterShouldDelegateToGoalControllerIncrementCounter() {
 		Goal goal = new Goal("goal");
 		Habit habit = new Habit("habit");
-		goal.setHabits(Arrays.asList(habit));
-		habit.setGoal(goal);
+		goal.addHabit(habit);
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Goal> listGoalModel = goalSwingView.getListGoalModel();
 			listGoalModel.addElement(goal);
@@ -397,8 +389,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testDecrementCounterShouldDelegateToGoalControllerDecrementCounter() {
 		Goal goal = new Goal("goal");
 		Habit habit = new Habit("habit");
-		goal.setHabits(Arrays.asList(habit));
-		habit.setGoal(goal);
+		goal.addHabit(habit);
 		habit.setCounter(1);
 		GuiActionRunner.execute(() -> {
 			DefaultListModel<Goal> listGoalModel = goalSwingView.getListGoalModel();

@@ -36,6 +36,7 @@ public class GoalTrackerSwingApp implements Callable<Void> {
 				goalView.setVisible(true);
 				goalController.allGoals();
 			} catch (Exception e) {
+				
 				Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Exception", e);
 			}
 		});
