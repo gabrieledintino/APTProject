@@ -202,7 +202,7 @@ public class GoalSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Incr. counter")).click();
 
 		await().atMost(5, TimeUnit.SECONDS)
-				.untilAsserted(() -> assertThat(window.list("habitList").contents()).containsExactly("Habit 1"));
+				.untilAsserted(() -> assertThat(window.list("habitList").contents()).containsExactly("Habit - 1"));
 
 	}
 
@@ -219,7 +219,7 @@ public class GoalSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Decr. counter")).click();
 
 		await().atMost(5, TimeUnit.SECONDS)
-				.untilAsserted(() -> assertThat(window.list("habitList").contents()).containsExactly("Habit 4"));
+				.untilAsserted(() -> assertThat(window.list("habitList").contents()).containsExactly("Habit - 4"));
 	}
 
 	@Test
@@ -239,7 +239,7 @@ public class GoalSwingViewIT extends AssertJSwingJUnitTestCase {
 				return !window.label("errorMessageLabel").text().trim().isEmpty();
 			}
 		}, timeout(TIMEOUT));
-		assertThat(window.list("habitList").contents()).containsExactly("Habit 0");
+		assertThat(window.list("habitList").contents()).containsExactly("Habit - 0");
 		window.label("errorMessageLabel").requireText("You can't decrement a counter equal to zero!");
 	}
 
