@@ -107,7 +107,6 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	@Test
 	@GUITest
 	public void testShowErrorShouldShowTheMessageInTheErrorLabel() {
-		//GuiActionRunner.execute(() -> goalSwingView.showError("error message"));
 		goalSwingView.showError("error message");
 		window.label("errorMessageLabel").requireText("error message");
 	}
@@ -141,7 +140,7 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 	
 	@Test
 	@GUITest
-	public void testAddHabitButtonShouldBeEnabledOnlyWhenAGoalIsSelectedAndFieldIsNotBlank() throws InterruptedException {
+	public void testAddHabitButtonShouldBeEnabledOnlyWhenAGoalIsSelectedAndFieldIsNotBlank() {
 		GuiActionRunner.execute(() -> goalSwingView.getListGoalModel().addElement(new Goal("test")));
 		JButtonFixture addHabitButton = window.button(JButtonMatcher.withText("Add habit"));
 		addHabitButton.requireDisabled();
@@ -176,7 +175,6 @@ public class GoalSwingViewTest extends AssertJSwingJUnitTestCase {
 			listGoalModel.addElement(goal);
 		});
 		window.list("goalList").selectItem(0);
-		//GuiActionRunner.execute(() -> goalSwingView.habitAdded(habit));
 		goalSwingView.habitAdded(habit);
 		String[] contents = window.list("habitList").contents();
 		assertThat(contents).containsExactly(habit.toString());
