@@ -1,11 +1,9 @@
 package com.aptproject.goaltracker.repository.postgres;
 
 import java.util.List;
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
 import com.aptproject.goaltracker.model.Goal;
 import com.aptproject.goaltracker.model.Habit;
@@ -44,7 +42,7 @@ public class PostgresModelRepository implements ModelRepository {
 			entityManager.getTransaction().begin();
 			entityManager.persist(goal);
 			entityManager.getTransaction().commit();
-		} catch (EntityExistsException | RollbackException e) {
+		} catch (Exception e) {
 			entityManager.getTransaction().rollback();
 			throw new GoalExistsException(goal);
 		}
@@ -58,7 +56,7 @@ public class PostgresModelRepository implements ModelRepository {
 			entityManager.getTransaction().begin();
 			entityManager.remove(existing);
 			entityManager.getTransaction().commit();
-		} catch (IllegalArgumentException | RollbackException e) {
+		} catch (Exception e) {
 			entityManager.getTransaction().rollback();
 			throw new GoalNotExistsException(goal);
 		}
@@ -69,14 +67,13 @@ public class PostgresModelRepository implements ModelRepository {
 		try {
 			entityManager.getTransaction().begin();
 			goal.addHabit(habit);
-			habit.setGoal(goal);
 			entityManager.merge(goal);
 			entityManager.getTransaction().commit();
-		} catch (IllegalStateException e) {
+		} catch (Exception e) {
+			goal.removeHabit(habit);
 			entityManager.getTransaction().rollback();
 			throw new HabitExistsException(habit);
 		}
-
 	}
 
 	@Override
@@ -87,10 +84,9 @@ public class PostgresModelRepository implements ModelRepository {
 		try {
 			entityManager.getTransaction().begin();
 			existingGoal.removeHabit(existingHabit);
-			entityManager.remove(existingHabit);
 			entityManager.merge(existingGoal);
 			entityManager.getTransaction().commit();
-		} catch (IllegalArgumentException | RollbackException e) {
+		} catch (Exception e) {
 			entityManager.getTransaction().rollback();
 			throw new HabitNotExistsException(habit);
 		}

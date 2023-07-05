@@ -167,7 +167,7 @@ public class GoalTrackerSwingAppE2E extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Incr. counter")).click();
 
 		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(window.list("habitList").contents())
-				.anySatisfy(e -> assertThat(e).contains(EXISTING_HABIT_1_NAME + " 1")));
+				.anySatisfy(e -> assertThat(e).contains(EXISTING_HABIT_1_NAME + " - 1")));
 	}
 
 	@Test
@@ -179,7 +179,7 @@ public class GoalTrackerSwingAppE2E extends AssertJSwingJUnitTestCase {
 		window.button(JButtonMatcher.withText("Decr. counter")).click();
 
 		await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(window.list("habitList").contents())
-				.anySatisfy(e -> assertThat(e).contains(EXISTING_HABIT_2_NAME + " 4")));
+				.anySatisfy(e -> assertThat(e).contains(EXISTING_HABIT_2_NAME + " - 4")));
 	}
 
 	@Test

@@ -62,7 +62,7 @@ public class Habit implements Serializable {
 	
 	@Override
 	public String toString() {
-		return name + " " + counter;
+		return name + " - " + counter;
 	}
 
 	@Override

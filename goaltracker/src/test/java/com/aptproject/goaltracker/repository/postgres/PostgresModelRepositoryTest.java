@@ -3,7 +3,6 @@ package com.aptproject.goaltracker.repository.postgres;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
@@ -124,8 +123,7 @@ public class PostgresModelRepositoryTest {
 	public void testRemoveHabitFromGoalRemoveHabit() throws HabitNotExistsException {
 		Goal goal = new Goal("Goal");
 		Habit habit = new Habit("Habit");
-		goal.setHabits(Arrays.asList(habit));
-		habit.setGoal(goal);
+		goal.addHabit(habit);
 		addGoalToDb(goal);
 		
 		goalRepository.removeHabitFromGoal(goal, habit);
@@ -151,8 +149,7 @@ public class PostgresModelRepositoryTest {
 	public void testIncrementCounter() {
 		Goal goal = new Goal("Goal");
 		Habit habit = new Habit("Habit");
-		goal.setHabits(Arrays.asList(habit));
-		habit.setGoal(goal);
+		goal.addHabit(habit);
 		addGoalToDb(goal);
 		
 		goalRepository.incrementCounter(habit);
@@ -165,8 +162,7 @@ public class PostgresModelRepositoryTest {
 	public void testDecrementCounter() {
 		Goal goal = new Goal("Goal");
 		Habit habit = new Habit("Habit");
-		goal.setHabits(Arrays.asList(habit));
-		habit.setGoal(goal);
+		goal.addHabit(habit);
 		habit.setCounter(5);
 		addGoalToDb(goal);
 		
@@ -196,7 +192,6 @@ public class PostgresModelRepositoryTest {
 		Habit habit1 = new Habit("Habit");
 		Habit habit2 = new Habit("Habit");
 		goal1.addHabit(habit1);
-		habit1.setGoal(goal1);
 		addGoalToDb(goal1);
 		addGoalToDb(goal2);
 		
@@ -213,13 +208,13 @@ public class PostgresModelRepositoryTest {
 		Habit habit1 = new Habit("Habit");
 		Habit habit2 = new Habit("Habit");
 		goal1.addHabit(habit1);
-		habit1.setGoal(goal1);
 		addGoalToDb(goal1);
 		addGoalToDb(goal2);
 		
 		assertThatThrownBy(() -> goalRepository.addHabitToGoal(goal1, habit2))
 			.isInstanceOf(HabitExistsException.class)
 			.hasMessage("The habit Habit already exists for the current goal");
+		assertThat(findAllDatabaseSavedGoals().get(0).getHabits()).size().isEqualTo(1);
 		assertThat(findAllDatabaseSavedHabits()).size().isEqualTo(1);
 	}
 	
