@@ -17,6 +17,16 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<hibernate.version>5.6.15.Final</hibernate.version>
 		<testcontainers.version>1.18.3</testcontainers.version>
+		<junit.version>4.13.2</junit.version>
+		<assertj-swing-junit.version>3.17.1</assertj-swing-junit.version>
+		<postgresql.version>42.6.0</postgresql.version>
+		<mockito.version>5.3.1</mockito.version>
+		<awaitility.version>4.2.0</awaitility.version>
+		<picocli.version>4.7.4</picocli.version>
+		<slf4j.version>2.0.7</slf4j.version>
+		<jacoco-maven.version>0.8.6</jacoco-maven.version>
+		<coveralls-maven.version>4.3.0</coveralls-maven.version>
+		<pitest-maven.version>1.5.2</pitest-maven.version>
 
 		<sonar.organization>gabrieledintino</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -49,15 +59,18 @@
 		<sonar.issue.ignore.multicriteria.e13.resourceKey>
 			**/GoalSwingViewTest.java
 		</sonar.issue.ignore.multicriteria.e13.resourceKey>
-		<!-- Disable rule for "Rename class "GoalTrackerSwingAppE2E" to match the regular expression: *(Test|Tests|TestCase|IT|ITCase)":
-        While the E2E naming is not conventional, it is the standard used in the course. -->
+		<!-- Disable rule for "Rename class "GoalTrackerSwingAppE2E" to match
+		the regular expression: *(Test|Tests|TestCase|IT|ITCase)":
+        While the E2E naming is not conventional, it is the standard used in the
+		course. -->
 		<sonar.issue.ignore.multicriteria.e14.ruleKey>
 			java:S3577
 		</sonar.issue.ignore.multicriteria.e14.ruleKey>
 		<sonar.issue.ignore.multicriteria.e14.resourceKey>
 			**/GoalTrackerSwingAppE2E.java
 		</sonar.issue.ignore.multicriteria.e14.resourceKey>
-		<!-- Disable rule for "Use static access with "javax.swing.WindowConstants" for "EXIT_ON_CLOSE"":
+		<!-- Disable rule for "Use static access with
+		"javax.swing.WindowConstants" for "EXIT_ON_CLOSE"":
         As it's a Swing default behavior, we won't modify it. -->
 		<sonar.issue.ignore.multicriteria.e15.ruleKey>
 			java:S3252
@@ -65,7 +78,7 @@
 		<sonar.issue.ignore.multicriteria.e15.resourceKey>
 			**/GoalSwingView.java
 		</sonar.issue.ignore.multicriteria.e15.resourceKey>
-		
+
 		<sonar.coverage.exclusions>
 			**/model/*.*,
 			**/GoalTrackerSwingApp.*
@@ -83,7 +96,7 @@
 				<plugin>
 					<groupId>org.jacoco</groupId>
 					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>0.8.6</version>
+					<version>${jacoco-maven.version}</version>
 					<configuration>
 						<excludes>
 							<exclude>**/model/*.*</exclude>
@@ -102,7 +115,7 @@
 				<plugin>
 					<groupId>org.eluder.coveralls</groupId>
 					<artifactId>coveralls-maven-plugin</artifactId>
-					<version>4.3.0</version>
+					<version>${coveralls-maven.version}</version>
 					<dependencies>
 						<!-- This is required when using JDK 9 or higher since
 						javax.xml.bind has been removed from the JDK -->
@@ -117,6 +130,23 @@
 					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
 					<version>3.8.0.2131</version>
+				</plugin>
+				<plugin>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<version>${pitest-maven.version}</version>
+					<configuration>
+						<targetClasses>
+							<param>com.aptproject.goaltracker.controller.Goal*</param>
+						</targetClasses>
+						<targetTests>
+							<param>com.aptproject.goaltracker.controller.*</param>
+						</targetTests>
+						<mutators>
+							<mutator>STRONGER</mutator>
+						</mutators>
+						<mutationThreshold>100</mutationThreshold>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -177,13 +207,13 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13.2</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-swing-junit</artifactId>
-			<version>3.17.1</version>
+			<version>${assertj-swing-junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- Hibernate ORM -->
@@ -212,29 +242,29 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.6.0</version>
+			<version>${postgresql.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>5.3.1</version>
+			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.awaitility</groupId>
 			<artifactId>awaitility</artifactId>
-			<version>4.2.0</version>
+			<version>${awaitility.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>info.picocli</groupId>
 			<artifactId>picocli</artifactId>
-			<version>4.7.4</version>
+			<version>${picocli.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>2.0.7</version>
+			<version>${slf4j.version}</version>
 		</dependency>
 
 	</dependencies>
